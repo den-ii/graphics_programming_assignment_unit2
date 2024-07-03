@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="CS4406 Computer Graphics - Assignment #2"
+    />
+    <title>Assignment 2</title>
+    <script
+      type="text/javascript"
+      src="https://getfirebug.com/firebug-lite-debug.js"
+    ></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@v0.149.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.149.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <style id="jsbin-css"></style>
+  <body>
+    <canvas id="canvask"></canvas>
+    <script type="module">
+      import * as THREE from "three";
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+
+      function main() {
+        const canvas = document.querySelector("#canvask");
+        const renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
+
+        const geometry = new THREE.BufferGeometry();
+        var vertices = new Float32Array([
+          0,
+          1,
+          0, // Top vertex
+          0.951,
+          0.309,
+          0, // Top-right vertex
+          0.588,
+          -0.809,
+          0, // Bottom-right vertex
+          -0.588,
+          -0.809,
+          0, // Bottom-left vertex
+          -0.951,
+          0.309,
+          0, // Top-left vertex
+        ]);
+
+        var indices = new Uint16Array([
+          0,
+          1,
+          2, // Triangle 1
+          0,
+          2,
+          3, // Triangle 2
+          0,
+          3,
+          4, // Triangle 3
+        ]);
+
+        // var geometry = new THREE.BufferGeometry();
+        geometry.setAttribute(
+          "position",
+          new THREE.BufferAttribute(vertices, 3)
+        );
+        geometry.setIndex(new THREE.BufferAttribute(indices, 1));
+        geometry.computeVertexNormals();
+        const material = new THREE.MeshBasicMaterial({
+          color: "red",
+        });
+        const mesh = new THREE.Mesh(geometry, material);
+
+        const aspectRatio = {
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+
+        const camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight
+        );
+
+        let cameraControls = new OrbitControls(camera, canvas);
+        cameraControls.addEventListener("mousemove", renderer);
+        cameraControls.autoRotate = true;
+        camera.position.z = 4;
+        camera.position.x = 1;
+        // camera.position.y = 10;
+        renderer.setSize(aspectRatio.width, aspectRatio.height);
+
+        var light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(1, 10, 0);
+
+        const scene = new THREE.Scene();
+        // scene.background = new THREE.Color(0x000000);
+        scene.add(mesh);
+        scene.add(light);
+        const light2 = new THREE.AmbientLight(0x404040); // soft white light
+        scene.add(light2);
+        function animate() {
+          requestAnimationFrame(animate);
+          render();
+        }
+
+        function render() {
+          cameraControls.update();
+          renderer.render(scene, camera);
+        }
+        animate();
+      }
+
+      main();
+    </script>
+  </body>
+</html>
